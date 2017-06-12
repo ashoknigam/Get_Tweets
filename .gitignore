@@ -5,7 +5,7 @@ import sys
 import csv
 
 #http://www.tweepy.org/
-import tweepy
+import tweetpy
 
 #Get your Twitter API credentials and enter them here
 consumer_key = "your_consumer_key"
@@ -45,9 +45,3 @@ if __name__ == '__main__':
         get_tweets(sys.argv[1])
     else:
         print "Error: enter one username"
-
-    #alternative method: loop through multiple users
-	# users = ['user1','user2']
-
-	# for user in users:
-	# 	get_tweets(user)
