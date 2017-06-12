@@ -1,101 +1,53 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-# C extensions
-*.so
+import sys
+import csv
 
-# Distribution / packaging
-.Python
-env/
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
+#http://www.tweepy.org/
+import tweepy
 
-# PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
+#Get your Twitter API credentials and enter them here
+consumer_key = "your_consumer_key"
+consumer_secret = "your_consumer_secret"
+access_key = "your_access_key"
+access_secret = "your_access_secret"
 
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
+#method to get a user's last 20000 tweets
+def get_tweets(username):
 
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-.hypothesis/
+	#http://tweepy.readthedocs.org/en/v3.1.0/getting_started.html#api
+	auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+	auth.set_access_token(access_key, access_secret)
+	api = tweepy.API(auth)
 
-# Translations
-*.mo
-*.pot
+	#set count to however many tweets you want; twitter only allows 200 at once
+	number_of_tweets = 20000
 
-# Django stuff:
-*.log
-local_settings.py
+	#get tweets
+	tweets = api.user_timeline(screen_name = username,count = number_of_tweets)
 
-# Flask stuff:
-instance/
-.webassets-cache
+	#create array of tweet information: username, tweet id, date/time, text
+	tweets_for_csv = [[username,tweet.id_str, tweet.created_at, tweet.text.encode("utf-8")] for tweet in tweets]
 
-# Scrapy stuff:
-.scrapy
+	#write to a new csv file from the array of tweets
+	print "writing to {0}_tweets.csv".format(username)
+	with open("{0}_tweets.csv".format(username) , 'w+') as file:
+		writer = csv.writer(file, delimiter='|')
+		writer.writerows(tweets_for_csv)
 
-# Sphinx documentation
-docs/_build/
 
-# PyBuilder
-target/
+#if we're running this as a script
+if __name__ == '__main__':
 
-# Jupyter Notebook
-.ipynb_checkpoints
+    #get tweets for username passed at command line
+    if len(sys.argv) == 2:
+        get_tweets(sys.argv[1])
+    else:
+        print "Error: enter one username"
 
-# pyenv
-.python-version
+    #alternative method: loop through multiple users
+	# users = ['user1','user2']
 
-# celery beat schedule file
-celerybeat-schedule
-
-# SageMath parsed files
-*.sage.py
-
-# dotenv
-.env
-
-# virtualenv
-.venv
-venv/
-ENV/
-
-# Spyder project settings
-.spyderproject
-.spyproject
-
-# Rope project settings
-.ropeproject
-
-# mkdocs documentation
-/site
-
-# mypy
-.mypy_cache/
+	# for user in users:
+	# 	get_tweets(user)
